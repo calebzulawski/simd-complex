@@ -1,7 +1,7 @@
 #![feature(portable_simd)]
 
 use num_complex as nc;
-use simd_traits::{Num, Vector};
+use simd_traits::{Mask, Num, Vector};
 
 use core::{ops, simd::Simd};
 
@@ -37,6 +37,7 @@ where
     T: Vector,
 {
     type Scalar = nc::Complex<T::Scalar>;
+    type Mask = T::Mask;
     const ELEMENTS: usize = T::ELEMENTS;
 
     fn splat(value: Self::Scalar) -> Self {
@@ -55,6 +56,13 @@ where
     unsafe fn insert_unchecked(&mut self, index: usize, value: Self::Scalar) {
         self.re.insert_unchecked(index, value.re);
         self.im.insert_unchecked(index, value.im);
+    }
+
+    fn select(mask: &Self::Mask, true_values: Self, false_values: Self) -> Self {
+        Complex {
+            re: mask.clone().select(true_values.re, false_values.re),
+            im: mask.clone().select(true_values.im, false_values.im),
+        }
     }
 }
 
