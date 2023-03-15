@@ -83,8 +83,8 @@ where
 
     fn select(mask: &Self::Mask, true_values: Self, false_values: Self) -> Self {
         Complex {
-            re: mask.clone().select(true_values.re, false_values.re),
-            im: mask.clone().select(true_values.im, false_values.im),
+            re: mask.select(true_values.re, false_values.re),
+            im: mask.select(true_values.im, false_values.im),
         }
     }
 }
@@ -123,8 +123,8 @@ where
 {
     type Output = Self;
     fn add(self, rhs: Self) -> Self::Output {
-        let re = self.re.clone() + rhs.re.clone();
-        let im = self.im.clone() + rhs.im.clone();
+        let re = self.re + rhs.re;
+        let im = self.im + rhs.im;
         Self::Output { re, im }
     }
 }
@@ -136,7 +136,7 @@ where
     type Output = Self;
     fn sub(self, rhs: Self) -> Self::Output {
         let re = self.re.clone() - rhs.re.clone();
-        let im = self.im.clone() - rhs.im.clone();
+        let im = self.im - rhs.im;
         Self { re, im }
     }
 }
@@ -148,7 +148,7 @@ where
     type Output = Self;
     fn mul(self, rhs: Self) -> Self::Output {
         let re = self.re.clone() * rhs.re.clone() - self.im.clone() * rhs.im.clone();
-        let im = self.re.clone() * rhs.im.clone() + self.im.clone() * rhs.re.clone();
+        let im = self.re * rhs.im + self.im * rhs.re;
         Self { re, im }
     }
 }
@@ -162,7 +162,7 @@ where
         let denom = rhs.norm_sqr();
         let re =
             (self.re.clone() * rhs.re.clone() + self.im.clone() * rhs.im.clone()) / denom.clone();
-        let im = (self.im.clone() * rhs.re.clone() - self.re.clone() * rhs.im.clone()) / denom;
+        let im = (self.im * rhs.re - self.re * rhs.im) / denom;
         Self { re, im }
     }
 }
