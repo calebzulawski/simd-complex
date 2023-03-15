@@ -1,3 +1,5 @@
+//! SIMD vectors of complex numbers.
+
 #![feature(portable_simd)]
 
 use num_complex as nc;
@@ -8,6 +10,7 @@ use core::{
     simd::{Simd, SimdPartialEq},
 };
 
+/// A vector of complex numbers.
 #[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd, Hash)]
 #[repr(C)]
 pub struct Complex<T> {
@@ -15,6 +18,7 @@ pub struct Complex<T> {
     im: T,
 }
 
+/// A vector of complex numbers, backed by [`std::simd::Simd`].
 pub type SimdComplex<T, const N: usize> = Complex<Simd<T, N>>;
 
 impl<T> Complex<T>
