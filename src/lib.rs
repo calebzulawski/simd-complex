@@ -1,9 +1,12 @@
 #![feature(portable_simd)]
 
 use num_complex as nc;
-use simd_traits::{Mask, Num, Vector};
+use simd_traits::{num::Num, Mask, Vector};
 
-use core::{ops, simd::Simd};
+use core::{
+    ops,
+    simd::{Simd, SimdPartialEq},
+};
 
 #[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd, Hash)]
 #[repr(C)]
@@ -29,6 +32,22 @@ where
     /// Return the square of the complex norm.
     pub fn norm_sqr(&self) -> T {
         self.re.clone() * self.re.clone() + self.im.clone() * self.im.clone()
+    }
+}
+
+impl<T> SimdPartialEq for Complex<T>
+where
+    T: SimdPartialEq,
+    T::Mask: Mask,
+{
+    type Mask = T::Mask;
+
+    fn simd_eq(self, other: Self) -> Self::Mask {
+        self.re.simd_eq(other.re) & self.im.simd_eq(other.im)
+    }
+
+    fn simd_ne(self, other: Self) -> Self::Mask {
+        !self.simd_eq(other)
     }
 }
 
