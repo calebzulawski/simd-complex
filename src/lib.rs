@@ -2,12 +2,15 @@
 
 #![feature(portable_simd)]
 
-use num_complex as nc;
-use simd_traits::{num::Num, Mask, Vector};
-
 use core::{
     ops,
     simd::{Simd, SimdPartialEq},
+};
+use num_complex as nc;
+use simd_traits::{
+    num::Num,
+    swizzle::{Shuffle, Swizzle, SwizzleIndex},
+    Mask, Vector,
 };
 
 /// A vector of complex numbers.
@@ -85,6 +88,42 @@ where
         Complex {
             re: mask.select(true_values.re, false_values.re),
             im: mask.select(true_values.im, false_values.im),
+        }
+    }
+}
+
+impl<T> Shuffle for Complex<T>
+where
+    T: Shuffle,
+{
+    fn reverse(self) -> Self {
+        Self {
+            re: self.re.reverse(),
+            im: self.im.reverse(),
+        }
+    }
+
+    fn interleave(self, other: Self) -> (Self, Self) {
+        let (re1, re2) = self.re.interleave(other.re);
+        let (im1, im2) = self.im.interleave(other.im);
+        (Self { re: re1, im: im1 }, Self { re: re2, im: im2 })
+    }
+
+    fn deinterleave(self, other: Self) -> (Self, Self) {
+        let (re1, re2) = self.re.deinterleave(other.re);
+        let (im1, im2) = self.im.deinterleave(other.im);
+        (Self { re: re1, im: im1 }, Self { re: re2, im: im2 })
+    }
+}
+
+impl<T, U> Swizzle<Complex<U>> for Complex<T>
+where
+    T: Swizzle<U>,
+{
+    fn swizzle<I: SwizzleIndex>(self) -> Complex<U> {
+        Complex {
+            re: self.re.swizzle::<I>(),
+            im: self.im.swizzle::<I>(),
         }
     }
 }
