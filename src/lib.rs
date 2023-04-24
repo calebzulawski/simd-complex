@@ -119,6 +119,7 @@ where
 impl<T, U> Swizzle<Complex<U>> for Complex<T>
 where
     T: Swizzle<U>,
+    U: Vector<Scalar = T::Scalar>,
 {
     fn swizzle<I: SwizzleIndex>(self) -> Complex<U> {
         Complex {
