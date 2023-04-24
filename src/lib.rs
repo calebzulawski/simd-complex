@@ -17,8 +17,8 @@ use simd_traits::{
 #[derive(Copy, Clone, Debug, Default, PartialEq, PartialOrd, Hash)]
 #[repr(C)]
 pub struct Complex<T> {
-    re: T,
-    im: T,
+    pub re: T,
+    pub im: T,
 }
 
 /// A vector of complex numbers, backed by [`std::simd::Simd`].
