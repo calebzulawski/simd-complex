@@ -44,6 +44,24 @@ where
 
 impl<T> Complex<T>
 where
+    T: Shuffle,
+{
+    /// Convert from packed complex values.
+    pub fn from_packed(packed: [T; 2]) -> Self {
+        let [first, second] = packed;
+        let (re, im) = first.deinterleave(second);
+        Self { re, im }
+    }
+
+    /// Convert to packed complex values.
+    pub fn to_packed(self) -> [T; 2] {
+        let (first, second) = self.re.interleave(self.im);
+        [first, second]
+    }
+}
+
+impl<T> Complex<T>
+where
     T: Clone + Signed,
 {
     /// Return the complex conjugate.
