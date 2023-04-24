@@ -8,7 +8,7 @@ use core::{
 };
 use num_complex as nc;
 use simd_traits::{
-    num::Num,
+    num::{Num, Signed},
     swizzle::{Shuffle, Swizzle, SwizzleIndex},
     Mask, Vector,
 };
@@ -39,6 +39,19 @@ where
     /// Return the square of the complex norm.
     pub fn norm_sqr(&self) -> T {
         self.re.clone() * self.re.clone() + self.im.clone() * self.im.clone()
+    }
+}
+
+impl<T> Complex<T>
+where
+    T: Clone + Signed,
+{
+    /// Return the complex conjugate.
+    pub fn conj(&self) -> Self {
+        Self {
+            re: self.re.clone(),
+            im: -self.im.clone(),
+        }
     }
 }
 
