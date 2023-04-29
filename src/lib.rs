@@ -49,23 +49,13 @@ where
     /// Convert from packed complex values.
     pub fn from_packed(packed: [T; 2]) -> Self {
         let [first, second] = packed;
-        // Workaround broken interleave
-        let (re, im) = if T::ELEMENTS > 1 {
-            first.deinterleave(second)
-        } else {
-            (first, second)
-        };
+        let (re, im) = first.deinterleave(second);
         Self { re, im }
     }
 
     /// Convert to packed complex values.
     pub fn to_packed(self) -> [T; 2] {
-        // Workaround broken interleave
-        let (first, second) = if T::ELEMENTS > 1 {
-            self.re.interleave(self.im)
-        } else {
-            (self.re, self.im)
-        };
+        let (first, second) = self.re.interleave(self.im);
         [first, second]
     }
 }
