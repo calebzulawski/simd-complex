@@ -8,7 +8,10 @@ use core::{
 };
 use num_complex as nc;
 use simd_traits::{
-    num::{Num, Signed},
+    num::{
+        cast::{CastFrom, CastTo},
+        Num, Signed,
+    },
     swizzle::{Shuffle, Swizzle, SwizzleIndex},
     Mask, Vector,
 };
@@ -175,6 +178,19 @@ where
         Self {
             re: T::one(),
             im: T::zero(),
+        }
+    }
+}
+
+impl<T, U> CastFrom<Complex<T>> for Complex<U>
+where
+    T: Vector,
+    U: CastFrom<T>,
+{
+    fn cast_from(from: Complex<T>) -> Self {
+        Self {
+            re: from.re.cast_to(),
+            im: from.im.cast_to(),
         }
     }
 }
